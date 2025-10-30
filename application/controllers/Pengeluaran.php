@@ -73,6 +73,7 @@ class Pengeluaran extends CI_Controller {
       'uraian' => $this->input->post('uraian'),
       'jumlah' => $this->input->post('jumlah'),
       'platform' => $this->input->post('platform'),
+      'marketplace' => $this->input->post('marketplace'),
       'nama_toko' => $this->input->post('nama_toko'),
       'alamat_toko' => $this->input->post('alamat_toko'),
       'pembayaran' => $this->input->post('pembayaran'),
@@ -100,6 +101,7 @@ class Pengeluaran extends CI_Controller {
             'nilai_transaksi' => $total,
             'jenis_belanja_id' => $this->input->post('jenis_belanja_id'),
             'platform' => $this->input->post('platform'),
+            'marketplace' => $this->input->post('marketplace'),
             'nama_toko' => $this->input->post('nama_toko'),
             'alamat_toko' => $this->input->post('alamat_toko'),
             'pembayaran' => $this->input->post('pembayaran'),
@@ -174,6 +176,7 @@ public function update()
         'uraian' => $this->input->post('uraian'),
         'jumlah' => $this->input->post('jumlah'),
         'platform' => $this->input->post('platform'),
+        'marketplace' => $this->input->post('marketplace'),
         'nama_toko' => $this->input->post('nama_toko'),
         'alamat_toko' => $this->input->post('alamat_toko'),
         'pembayaran' => $this->input->post('pembayaran'),
@@ -296,12 +299,14 @@ public function update()
                   $uraian = trim($row['G']);
                   $jumlah = preg_replace('/\D/', '', $row['H']);
                   $platform = trim($row['I']);
-                  $nama_toko = trim($row['J']);
-                  $alamat_toko = trim($row['K']);
-                  $pembayaran = trim($row['L']);
-                  $no_rekening = trim($row['M']);
-                  $nama_bank = trim($row['N']);
-                  $tahun_excel = trim($row['O']);
+                  $marketplace = trim($row['J']); // kolom baru
+                $nama_toko = trim($row['K']);
+                $alamat_toko = trim($row['L']);
+                $pembayaran = trim($row['M']);
+                $no_rekening = trim($row['N']);
+                $nama_bank = trim($row['O']);
+                $tahun_excel = trim($row['P']);
+
 
                   $tahun_fix = !empty($tahun_excel) ? $tahun_excel : $tahun;
                   $invoice_no = $invoice_no ?: 'INV-' . $tahun_fix . '-' . str_pad($numrow, 3, '0', STR_PAD_LEFT);
@@ -334,6 +339,7 @@ public function update()
                       'uraian' => $uraian,
                       'jumlah' => $jumlah ?: 0,
                       'platform' => $platform ?: 'Non_SIPLAH',
+                      'marketplace' => $marketplace,
                       'nama_toko' => $nama_toko,
                       'alamat_toko' => $alamat_toko,
                       'pembayaran' => $pembayaran ?: 'Tunai',
@@ -383,7 +389,7 @@ public function download_template()
     $headers = [
       "Sumber Anggaran", "Kegiatan", "No Invoice / Virtual Account",
       "Tanggal (YYYY-MM-DD)", "Kodering (kode - nama)", "Jenis Belanja",
-      "Uraian", "Jumlah (Rp)", "Platform (SIPLAH / Non_SIPLAH)",
+      "Uraian", "Jumlah (Rp)", "Platform (SIPLAH / Non_SIPLAH)", "Marketplace / Mitra SIPLAH",
       "Nama Toko / Penyedia", "Alamat Toko", "Pembayaran (Tunai / Non-Tunai)",
       "No Rekening", "Nama Bank", "Tahun"
     ];
@@ -415,6 +421,7 @@ public function download_template()
       'ATK Ujian',
       '150000',
       'Non_SIPLAH',
+      'Blibli',
       'Toko Maju Jaya',
       'Jl. Merdeka No.12',
       'Tunai',
@@ -474,35 +481,45 @@ public function download_template()
     $excel->getSheetByName('JenisBelanja')->setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);
 
     // Dropdown Kodering (kolom E)
-    $validation_kodering = $sheet->getCell('E2')->getDataValidation();
-    $validation_kodering->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
-    $validation_kodering->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
-    $validation_kodering->setAllowBlank(true);
-    $validation_kodering->setShowDropDown(true);
-    $validation_kodering->setFormula1('=DataKodering!$A$1:$A$' . ($r - 1));
-    for ($i = 2; $i <= 500; $i++) {
-        $sheet->getCell("E$i")->setDataValidation(clone $validation_kodering);
-    }
+$validation_kodering = $sheet->getCell('E2')->getDataValidation();
+$validation_kodering->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
+$validation_kodering->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
+$validation_kodering->setAllowBlank(true);
+$validation_kodering->setShowDropDown(true);
+$validation_kodering->setFormula1('=DataKodering!$A$1:$A$' . ($r - 1));
+for ($i = 2; $i <= 500; $i++) {
+    $sheet->getCell("E$i")->setDataValidation(clone $validation_kodering);
+}
 
-    // Dropdown Jenis Belanja (kolom F)
-    $validation_jb = $sheet->getCell('F2')->getDataValidation();
-    $validation_jb->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
-    $validation_jb->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
-    $validation_jb->setAllowBlank(true);
-    $validation_jb->setShowDropDown(true);
-    $validation_jb->setFormula1('=JenisBelanja!$A$1:$A$' . ($j - 1));
-    for ($i = 2; $i <= 500; $i++) {
-        $sheet->getCell("F$i")->setDataValidation(clone $validation_jb);
-    }
+// Dropdown Jenis Belanja (kolom F)
+$validation_jb = $sheet->getCell('F2')->getDataValidation();
+$validation_jb->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
+$validation_jb->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
+$validation_jb->setAllowBlank(true);
+$validation_jb->setShowDropDown(true);
+$validation_jb->setFormula1('=JenisBelanja!$A$1:$A$' . ($j - 1));
+for ($i = 2; $i <= 500; $i++) {
+    $sheet->getCell("F$i")->setDataValidation(clone $validation_jb);
+}
 
-    // Output file
-    if (ob_get_length()) { @ob_end_clean(); }
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="Template_Pengeluaran_Sekolah.xlsx"');
-    header('Cache-Control: max-age=0');
+// ✅ Tambahkan di sini:
+for ($i = 2; $i <= 500; $i++) {
+    $sheet->getCell("J$i")->getDataValidation()
+          ->setType(PHPExcel_Cell_DataValidation::TYPE_LIST)
+          ->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP)
+          ->setAllowBlank(true)
+          ->setShowDropDown(true)
+          ->setFormula1('"Blibli,Toko Ladang,Pesona Edu,Belanja Sekolah,Lainnya"');
+}
 
-    $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-    $writer->save('php://output');
-    exit;
+// Output file Excel
+if (ob_get_length()) { @ob_end_clean(); }
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="Template_Pengeluaran_Sekolah.xlsx"');
+header('Cache-Control: max-age=0');
+
+$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+$writer->save('php://output');
+exit;
 }
 }

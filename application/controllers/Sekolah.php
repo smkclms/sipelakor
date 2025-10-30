@@ -122,6 +122,50 @@ class Sekolah extends CI_Controller {
     $data['total_pengeluaran'] = $total_pengeluaran;
     $data['sisa_anggaran'] = $sisa_anggaran;
     $data['tahun_aktif'] = $tahun_aktif;
+    // ========================================================
+    // 🔹 CARD PER SUMBER ANGGARAN (DINAMIS)
+    // ========================================================
+    $this->db->select('sa.id, sa.nama');
+    $this->db->from('tb_anggaran_sekolah a');
+    $this->db->join('tb_sumber_anggaran sa', 'sa.id = a.sumber_id', 'left');
+    $this->db->where('a.sekolah_id', $sekolah_id);
+    if ($tahun_id) {
+        $this->db->where('a.tahun_id', $tahun_id);
+    }
+    $this->db->group_by('sa.id');
+    $sumber_list = $this->db->get()->result();
+
+    $sumber_summary = [];
+
+    foreach ($sumber_list as $s) {
+        // Total pagu per sumber
+        $this->db->select_sum('jumlah');
+        $this->db->where('sekolah_id', $sekolah_id);
+        $this->db->where('sumber_id', $s->id);
+        if ($tahun_id) $this->db->where('tahun_id', $tahun_id);
+        $row = $this->db->get('tb_anggaran_sekolah')->row();
+        $pagu = isset($row->jumlah) ? $row->jumlah : 0;
+
+        // Total pengeluaran per sumber
+        $this->db->select_sum('jumlah');
+        $this->db->where('sekolah_id', $sekolah_id);
+        $this->db->where('sumber_anggaran_id', $s->id);
+        if ($tahun_id) $this->db->where('tahun_anggaran', $tahun_aktif);
+        $row = $this->db->get('tb_pengeluaran')->row();
+        $pengeluaran = isset($row->jumlah) ? $row->jumlah : 0;
+
+        // Sisa anggaran
+        $sisa = $pagu - $pengeluaran;
+
+        $sumber_summary[] = [
+            'nama' => $s->nama,
+            'pagu' => $pagu,
+            'pengeluaran' => $pengeluaran,
+            'sisa' => $sisa
+        ];
+    }
+
+    $data['sumber_summary'] = $sumber_summary;
 
     // load view
     $this->load->view('template/header');

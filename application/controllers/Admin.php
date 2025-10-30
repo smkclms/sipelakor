@@ -61,6 +61,133 @@ class Admin extends CI_Controller {
     $data['pagu_smk'] = get_total_anggaran_by_jenjang(4);
     $data['pagu_sma'] = get_total_anggaran_by_jenjang(5);
     $data['pagu_slb'] = get_total_anggaran_by_jenjang(6);
+    // ===============================================================
+// 🔹 DATA PER SUMBER ANGGARAN UNTUK SETIAP JENJANG
+// ===============================================================
+$jenjang_list = array(
+    array('id' => 4, 'nama' => 'SMK'),
+    array('id' => 5, 'nama' => 'SMA'),
+    array('id' => 6, 'nama' => 'SLB')
+);
+
+$jenjang_summary = array();
+
+foreach ($jenjang_list as $j) {
+    $this->db->select('sa.id, sa.nama');
+    $this->db->from('tb_anggaran_sekolah a');
+    $this->db->join('tb_user u', 'u.id = a.sekolah_id', 'left');
+    $this->db->join('tb_sumber_anggaran sa', 'sa.id = a.sumber_id', 'left');
+    $this->db->where('u.jenjang_id', $j['id']);
+    if ($tahun_id) {
+        $this->db->where('a.tahun_id', $tahun_id);
+    }
+    $this->db->group_by('sa.id');
+    $sumber_list = $this->db->get()->result();
+
+    $sumber_summary = array();
+
+    foreach ($sumber_list as $s) {
+        // Total sekolah dengan sumber anggaran ini
+        $this->db->select('COUNT(DISTINCT a.sekolah_id) as jumlah');
+        $this->db->from('tb_anggaran_sekolah a');
+        $this->db->join('tb_user u', 'u.id = a.sekolah_id', 'left');
+        $this->db->where('u.jenjang_id', $j['id']);
+        $this->db->where('a.sumber_id', $s->id);
+        if ($tahun_id) $this->db->where('a.tahun_id', $tahun_id);
+        $row_jumlah = $this->db->get()->row();
+        $jumlah_sekolah = isset($row_jumlah->jumlah) ? $row_jumlah->jumlah : 0;
+
+        // Total pagu
+        $this->db->select_sum('a.jumlah', 'total');
+        $this->db->from('tb_anggaran_sekolah a');
+        $this->db->join('tb_user u', 'u.id = a.sekolah_id', 'left');
+        $this->db->where('u.jenjang_id', $j['id']);
+        $this->db->where('a.sumber_id', $s->id);
+        if ($tahun_id) $this->db->where('a.tahun_id', $tahun_id);
+        $row_pagu = $this->db->get()->row();
+        $pagu = isset($row_pagu->total) ? $row_pagu->total : 0;
+
+        // Total pengeluaran
+        $this->db->select_sum('p.jumlah', 'total');
+        $this->db->from('tb_pengeluaran p');
+        $this->db->join('tb_user u', 'u.id = p.sekolah_id', 'left');
+        $this->db->where('u.jenjang_id', $j['id']);
+        $this->db->where('p.sumber_anggaran_id', $s->id);
+        if ($tahun_id) $this->db->where('p.tahun_anggaran', $tahun_aktif);
+        $row_peng = $this->db->get()->row();
+        $pengeluaran = isset($row_peng->total) ? $row_peng->total : 0;
+
+        $sisa = $pagu - $pengeluaran;
+        $persen = ($pagu > 0) ? round(($pengeluaran / $pagu) * 100) : 0;
+
+        $sumber_summary[] = array(
+            'nama' => $s->nama,
+            'jumlah_sekolah' => $jumlah_sekolah,
+            'pagu' => $pagu,
+            'pengeluaran' => $pengeluaran,
+            'sisa' => $sisa,
+            'persen' => $persen
+        );
+    }
+
+    $jenjang_summary[] = array(
+        'jenjang' => $j['nama'],
+        'detail' => $sumber_summary
+    );
+}
+
+$data['jenjang_summary'] = $jenjang_summary;
+
+// ===============================================================
+// 🔹 RINCIAN PENGELUARAN GLOBAL BERDASARKAN SUMBER
+// ===============================================================
+$this->db->select('sa.nama as sumber, SUM(p.jumlah) as total');
+$this->db->from('tb_pengeluaran p');
+$this->db->join('tb_sumber_anggaran sa', 'sa.id = p.sumber_anggaran_id', 'left');
+if ($tahun_id) {
+    $this->db->where('p.tahun_anggaran', $tahun_aktif);
+}
+$this->db->group_by('sa.nama');
+$this->db->order_by('sa.nama', 'DESC'); // ✅ urutkan alfabet (BOS Reguler dulu)
+
+$data['by_sumber'] = $this->db->get()->result();
+
+// =======================================================
+// DETAIL RINCIAN PENGELUARAN UNTUK ADMIN
+// =======================================================
+
+// Berdasarkan sumber anggaran
+$this->db->select('sa.nama as sumber, SUM(p.jumlah) as total');
+$this->db->from('tb_pengeluaran p');
+$this->db->join('tb_sumber_anggaran sa', 'sa.id = p.sumber_anggaran_id', 'left');
+if ($tahun_id) {
+    $this->db->where('p.tahun_anggaran', $tahun_aktif);
+}
+$this->db->group_by('sa.nama');
+$this->db->order_by('sa.nama', 'ASC');
+$data['by_sumber'] = $this->db->get()->result();
+
+// Berdasarkan kategori belanja
+$this->db->select('k.nama as kategori, SUM(p.jumlah) as total');
+$this->db->from('tb_pengeluaran p');
+$this->db->join('tb_kategori_belanja k', 'k.id = p.jenis_belanja_id', 'left');
+if ($tahun_id) {
+    $this->db->where('p.tahun_anggaran', $tahun_aktif);
+}
+$this->db->group_by('k.nama');
+$this->db->order_by('k.nama', 'ASC');
+$data['by_kategori'] = $this->db->get()->result();
+
+// Berdasarkan kodering
+$this->db->select('ko.nama as kodering, SUM(p.jumlah) as total');
+$this->db->from('tb_pengeluaran p');
+$this->db->join('tb_kodering ko', 'ko.id = p.kodering_id', 'left');
+if ($tahun_id) {
+    $this->db->where('p.tahun_anggaran', $tahun_aktif);
+}
+$this->db->group_by('ko.nama');
+$this->db->order_by('ko.nama', 'ASC');
+$data['by_kodering'] = $this->db->get()->result();
 
     // Load tampilan dashboard
     $this->load->view('template/header');

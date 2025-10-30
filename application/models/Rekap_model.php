@@ -37,9 +37,15 @@ class Rekap_model extends CI_Model {
     }
 
     public function update_total($invoice_no, $total){
-        $this->db->where('invoice_no', $invoice_no);
-        return $this->db->update($this->table, ['nilai_transaksi' => $total]);
-    }
+    $this->db->where('invoice_no', $invoice_no);
+    $this->db->update($this->table, ['nilai_transaksi' => $total]);
+
+    // 🔹 Tambahkan sinkron marketplace
+    $this->update_marketplace($invoice_no);
+
+    return true;
+}
+
 
     // 🔹 Hapus 1 rekap + seluruh data pengeluaran dengan invoice yang sama
     public function cascade_delete($invoice_no){
@@ -104,6 +110,27 @@ class Rekap_model extends CI_Model {
 
     $this->db->order_by('r.tanggal', 'DESC');
     return $this->db->get()->result();
+}
+public function update_marketplace($invoice_no)
+{
+    // Ambil semua marketplace unik berdasarkan invoice
+    $this->db->select('DISTINCT(marketplace)');
+    $this->db->where('invoice_no', $invoice_no);
+    $query = $this->db->get('tb_pengeluaran');
+
+    $marketplaces = array();
+    foreach ($query->result() as $row) {
+        if (!empty($row->marketplace)) {
+            $marketplaces[] = $row->marketplace;
+        }
+    }
+
+    // Gabungkan jadi string, atau null kalau kosong
+    $marketplace_str = !empty($marketplaces) ? implode(', ', array_unique($marketplaces)) : NULL;
+
+    // Update kolom marketplace di tb_rekap_pembelanjaan
+    $this->db->where('invoice_no', $invoice_no);
+    $this->db->update($this->table, ['marketplace' => $marketplace_str]);
 }
 
 

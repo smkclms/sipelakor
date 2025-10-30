@@ -40,7 +40,7 @@ $(function(){
   });
 });
 </script>
-<script>
+<!-- <script>
   document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.getElementById('sidebarToggle');
@@ -68,8 +68,80 @@ $(function(){
       sidebar.classList.remove('active');
     });
   });
+</script> -->
+<!-- === AUTO FULL-WIDTH LAYOUT HANDLER === -->
+<style>
+  /* === BASE MAIN CONTENT === */
+  .main-content {
+    transition: margin-left 0.3s ease, padding 0.3s ease;
+    width: 100%;
+    margin-left: 230px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background-color: #fff;
+  }
+
+  /* Saat sidebar collapse */
+  .sidebar.collapsed ~ .main-content {
+    margin-left: 70px;
+  }
+
+  /* === MODE NORMAL (default) === */
+  .layout-normal {
+    padding: 30px 40px;
+  }
+
+  /* === MODE FULL WIDTH (otomatis aktif untuk halaman dengan tabel/chart) === */
+  .layout-full {
+    padding: 15px 10px;
+    max-width: 100%;
+  }
+
+  .layout-full .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .layout-full .container,
+  .layout-full .container-fluid {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Animasi halus saat transisi */
+  .layout-full, .layout-normal {
+    transition: all 0.3s ease-in-out;
+  }
+
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0 !important;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const mainContent = document.getElementById('mainContent');
+
+    if (mainContent) {
+      // deteksi kalau halaman punya tabel besar atau grafik
+      const hasTable = document.querySelector('.table, .table-responsive');
+      const hasChart = document.querySelector('canvas, .chartjs-render-monitor');
+
+      // otomatis tentukan layout
+      if (hasTable || hasChart) {
+        mainContent.classList.add('layout-full');
+      } else {
+        mainContent.classList.add('layout-normal');
+      }
+    }
+  });
 </script>
-
-
 </body>
 </html>

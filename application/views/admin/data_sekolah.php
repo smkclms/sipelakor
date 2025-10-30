@@ -1,4 +1,5 @@
-<div class="container mt-4">
+<div class="content-wrapper-full mt-4">
+
   <h3 class="text-primary mb-4">Data Sekolah & Anggaran</h3>
   <form method="get" class="form-inline mb-3">
   <label class="mr-2">Filter Jenjang:</label>
@@ -111,4 +112,50 @@
 <style>
   .table th, .table td { vertical-align: middle; }
   .table-dark th { text-align: center; }
+  /* === FULL WIDTH CONTENT UNTUK HALAMAN DATA SEKOLAH === */
+.content-wrapper-full {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 10px; /* beri sedikit ruang di sisi kanan-kiri agar tidak nempel total */
+  box-sizing: border-box;
+}
+
+/* Pastikan tabelnya melebar penuh */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Hilangkan batas kanan container bootstrap */
+.container,
+.container-fluid {
+  max-width: 98% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Pastikan main-content juga full width (tanpa sisa jarak kanan) */
+.main-content {
+  width: 100%;
+  margin-left: 230px; /* sesuai sidebar width */
+  transition: margin-left 0.3s ease;
+  padding-right: 0;
+  padding-left: 0;
+}
+.sidebar.collapsed ~ .main-content {
+  margin-left: 70px;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden; /* cegah scrollbar horizontal */
+}
+
+/* Tabel tetap rapi tapi bisa melebar penuh */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
 </style>

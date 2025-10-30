@@ -25,104 +25,111 @@
 
   <!-- 🔹 Form Tambah Pengeluaran Manual -->
   <form method="post" action="<?= base_url('pengeluaran/tambah') ?>" enctype="multipart/form-data" class="mb-4">
-    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>"
-           value="<?= $this->security->get_csrf_hash(); ?>">
+  <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>"
+         value="<?= $this->security->get_csrf_hash(); ?>">
 
-    <div class="form-row">
-      <div class="col-md-3 mb-2">
-        <select name="sumber_anggaran_id" class="form-control" required>
-          <option value="">-- Pilih Sumber Anggaran --</option>
-          <?php foreach($sumber_anggaran as $sa): ?>
-            <option value="<?= $sa->id ?>"><?= $sa->nama ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <div class="col-md-4 mb-2">
-        <input type="text" name="kegiatan" class="form-control" placeholder="Nama Kegiatan" required>
-      </div>
+  <div class="form-row">
+    <div class="col-md-3 mb-2">
+      <select name="sumber_anggaran_id" class="form-control" required>
+        <option value="">-- Pilih Sumber Anggaran --</option>
+        <?php foreach($sumber_anggaran as $sa): ?>
+          <option value="<?= $sa->id ?>"><?= $sa->nama ?></option>
+        <?php endforeach; ?>
+      </select>
     </div>
 
-    <div class="form-row">
-      <div class="col-md-3 mb-2">
-        <input type="text" name="invoice_no" class="form-control" placeholder="No Invoice / Virtual Account (opsional)">
-      </div>
+    <div class="col-md-4 mb-2">
+      <input type="text" name="kegiatan" class="form-control" placeholder="Nama Kegiatan" required>
+    </div>
+  </div>
 
-      <div class="col-md-2 mb-2">
-        <input type="date" name="tanggal" class="form-control" required>
-      </div>
-
-      <div class="col-md-3 mb-2">
-        <select name="kodering_id" class="form-control" required>
-          <option value="">-- Pilih Kodering --</option>
-          <?php foreach($kodering as $k): ?>
-            <option value="<?= $k->id ?>"><?= $k->kode ?> - <?= $k->nama ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <div class="col-md-3 mb-2">
-        <select name="jenis_belanja_id" class="form-control" required>
-          <option value="">-- Pilih Jenis Belanja --</option>
-          <?php foreach($kategori_belanja as $k): ?>
-            <option value="<?= $k->id ?>"><?= $k->nama ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <div class="col-md-4 mb-2">
-        <input type="text" name="uraian" class="form-control" placeholder="Uraian Pengeluaran" required>
-      </div>
+  <div class="form-row">
+    <div class="col-md-3 mb-2">
+      <input type="text" name="invoice_no" class="form-control" placeholder="No Invoice / Virtual Account (opsional)">
     </div>
 
-    <div class="form-row">
-      <div class="col-md-2 mb-2">
-        <input type="number" name="jumlah" class="form-control" placeholder="Jumlah (Rp)" required>
-      </div>
-
-      <div class="col-md-2 mb-2">
-        <select name="platform" class="form-control">
-          <option value="Non_SIPLAH">Non SIPLAH</option>
-          <option value="SIPLAH">SIPLAH</option>
-        </select>
-      </div>
-
-      <div class="col-md-3 mb-2">
-        <input type="text" name="nama_toko" class="form-control" placeholder="Nama Toko/Penyedia">
-      </div>
-
-      <div class="col-md-3 mb-2">
-        <input type="text" name="alamat_toko" class="form-control" placeholder="Alamat Toko">
-      </div>
-
-      <div class="col-md-2 mb-2">
-        <select name="pembayaran" class="form-control">
-          <option value="Tunai">Tunai</option>
-          <option value="Non-Tunai">Non-Tunai</option>
-        </select>
-      </div>
+    <div class="col-md-2 mb-2">
+      <input type="date" name="tanggal" class="form-control" required>
     </div>
 
-    <div class="form-row">
-      <div class="col-md-2 mb-2">
-        <input type="text" name="no_rekening" class="form-control" placeholder="No Rekening">
-      </div>
-
-      <div class="col-md-2 mb-2">
-        <input type="text" name="nama_bank" class="form-control" placeholder="Nama Bank">
-      </div>
-
-      <div class="col-md-4 mb-2">
-        <input type="file" name="bukti" class="form-control">
-      </div>
-
-      <div class="col-md-4 mb-2 text-right">
-        <button type="submit" class="btn btn-success">💾 Simpan</button>
-      </div>
+    <div class="col-md-3 mb-2">
+      <select name="kodering_id" class="form-control" required>
+        <option value="">-- Pilih Kodering --</option>
+        <?php foreach($kodering as $k): ?>
+          <option value="<?= $k->id ?>"><?= $k->kode ?> - <?= $k->nama ?></option>
+        <?php endforeach; ?>
+      </select>
     </div>
-  </form>
 
-  <!-- 🔹 Tabel Data Pengeluaran -->
+    <div class="col-md-3 mb-2">
+      <select name="jenis_belanja_id" class="form-control" required>
+        <option value="">-- Pilih Jenis Belanja --</option>
+        <?php foreach($kategori_belanja as $k): ?>
+          <option value="<?= $k->id ?>"><?= $k->nama ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+
+    <div class="col-md-4 mb-2">
+      <input type="text" name="uraian" class="form-control" placeholder="Uraian Pengeluaran" required>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="col-md-2 mb-2">
+      <input type="number" name="jumlah" class="form-control" placeholder="Jumlah (Rp)" required>
+    </div>
+
+    <div class="col-md-2 mb-2">
+      <select name="platform" class="form-control">
+        <option value="Non_SIPLAH">Non SIPLAH</option>
+        <option value="SIPLAH">SIPLAH</option>
+      </select>
+    </div>
+
+    <!-- ✅ Tambahan Baru -->
+    <div class="col-md-3 mb-2">
+      <input type="text" name="marketplace" class="form-control" placeholder="Marketplace / Mitra SIPLAH">
+    </div>
+    <!-- ✅ Selesai Tambahan -->
+
+    <div class="col-md-3 mb-2">
+      <input type="text" name="nama_toko" class="form-control" placeholder="Nama Toko/Penyedia">
+    </div>
+
+    <div class="col-md-3 mb-2">
+      <input type="text" name="alamat_toko" class="form-control" placeholder="Alamat Toko">
+    </div>
+
+    <div class="col-md-2 mb-2">
+      <select name="pembayaran" class="form-control">
+        <option value="Tunai">Tunai</option>
+        <option value="Non-Tunai">Non-Tunai</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="col-md-2 mb-2">
+      <input type="text" name="no_rekening" class="form-control" placeholder="No Rekening / Virtual Account">
+    </div>
+
+    <div class="col-md-2 mb-2">
+      <input type="text" name="nama_bank" class="form-control" placeholder="Nama Bank">
+    </div>
+
+    <div class="col-md-4 mb-2">
+      <input type="file" name="bukti" class="form-control">
+    </div>
+
+    <div class="col-md-4 mb-2 text-right">
+      <button type="submit" class="btn btn-success">💾 Simpan</button>
+    </div>
+  </div>
+</form>
+
+
+    <!-- 🔹 Tabel Data Pengeluaran -->
   <div class="table-responsive">
     <table class="table table-bordered table-sm mt-3">
       <thead class="thead-light">
@@ -136,6 +143,7 @@
           <th>Uraian</th>
           <th>Jumlah</th>
           <th>Platform</th>
+          <th>Marketplace / Mitra SIPLAH</th> <!-- ✅ Kolom baru -->
           <th>Nama Toko</th>
           <th>Pembayaran</th>
           <th>Bukti</th>
@@ -156,6 +164,7 @@
               <td><?= $p->uraian ?></td>
               <td>Rp <?= number_format($p->jumlah,0,',','.') ?></td>
               <td><?= $p->platform ?></td>
+              <td><?= !empty($p->marketplace) ? htmlspecialchars($p->marketplace, ENT_QUOTES, 'UTF-8') : '-' ?></td> <!-- ✅ tampilkan marketplace -->
               <td><?= $p->nama_toko ?></td>
               <td><?= $p->pembayaran ?></td>
               <td>
@@ -178,13 +187,68 @@
           <?php endforeach; ?>
         <?php else: ?>
           <tr>
-            <td colspan="14" class="text-center text-muted">Belum ada data pengeluaran</td>
+            <td colspan="15" class="text-center text-muted">Belum ada data pengeluaran</td>
           </tr>
         <?php endif; ?>
       </tbody>
     </table>
   </div>
-</div>
+  <style>
+<style>
+/* === FULL WIDTH FIX UNTUK TABEL PENGELUARAN === */
+
+/* Hilangkan padding di container utama agar tabel mentok kanan */
+.container,
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Biar tabel isi tetap rapi */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 10px;
+  padding: 8px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Table wajib punya minimal lebar agar scroll bisa muncul */
+.table {
+  min-width: 1400px;
+  white-space: nowrap;
+  margin-bottom: 0;
+}
+
+/* Pastikan wrapper utama nggak membatasi lebar */
+.main-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden;
+}
+
+/* Hilangkan margin default footer */
+footer {
+  margin: 0 !important;
+  padding: 10px 0 !important;
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+  .table-container {
+    padding: 4px;
+  }
+  .table {
+    font-size: 13px;
+  }
+}
+</style>
+
+
 <!-- Tambahkan ini di bawah tabel, sebelum </div> terakhir -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

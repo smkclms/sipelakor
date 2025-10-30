@@ -2,15 +2,54 @@
   <h4 class="mb-4">Rekap Pembelanjaan Semua Sekolah (Tahun <?= $tahun_aktif ?>)</h4>
 
   <form method="get" class="form-inline mb-3">
-    <label class="mr-2">Pilih Tahun:</label>
-    <select name="tahun_id" class="form-control mr-2" onchange="this.form.submit()">
-      <?php foreach ($tahun_all as $t): ?>
-        <option value="<?= $t->id ?>" <?= ($t->tahun == $tahun_aktif) ? 'selected' : '' ?>>
-          <?= $t->tahun ?>
-        </option>
-      <?php endforeach; ?>
-    </select>
-  </form>
+  <label class="mr-2">Pilih Tahun:</label>
+  <select name="tahun_id" class="form-control mr-3" onchange="this.form.submit()">
+    <?php foreach ($tahun_all as $t): ?>
+      <option value="<?= $t->id ?>" <?= ($t->tahun == $tahun_aktif) ? 'selected' : '' ?>>
+        <?= $t->tahun ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+
+  <label class="mr-2">Sekolah:</label>
+  <select name="sekolah_id" class="form-control mr-3" onchange="this.form.submit()">
+    <option value="">-- Semua Sekolah --</option>
+    <?php foreach ($sekolah_all as $s): ?>
+      <option value="<?= $s->id ?>" <?= ($this->input->get('sekolah_id') == $s->id) ? 'selected' : '' ?>>
+        <?= $s->nama ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+
+  <label class="mr-2">Periode:</label>
+  <select name="bulan" class="form-control mr-3" onchange="this.form.submit()">
+    <option value="">-- Semua Bulan --</option>
+    <?php
+      $bulan_list = [
+        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+        7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+      ];
+      $bulan_terpilih = $this->input->get('bulan');
+      foreach ($bulan_list as $num => $nama):
+    ?>
+      <option value="<?= $num ?>" <?= ($bulan_terpilih == $num) ? 'selected' : '' ?>><?= $nama ?></option>
+    <?php endforeach; ?>
+  </select>
+
+  <noscript><button type="submit" class="btn btn-primary btn-sm">Filter</button></noscript>
+</form>
+
+  <div class="mb-3">
+  <a href="<?= base_url('rekap/export_excel?tahun_id=' . $this->input->get('tahun_id') . '&bulan=' . $this->input->get('bulan') . '&sekolah_id=' . $this->input->get('sekolah_id')) ?>" 
+     class="btn btn-success btn-sm">
+    <i class="fa fa-file-excel"></i> Export Excel
+  </a>
+
+  <a href="<?= base_url('rekap/export_pdf?tahun_id=' . $this->input->get('tahun_id') . '&bulan=' . $this->input->get('bulan') . '&sekolah_id=' . $this->input->get('sekolah_id')) ?>" 
+     class="btn btn-danger btn-sm">
+    <i class="fa fa-file-pdf"></i> Export PDF
+  </a>
+</div>
 
   <table class="table table-bordered table-hover table-sm">
     <thead class="thead-light">
@@ -54,3 +93,47 @@
     Rp <?= number_format($total_penggunaan, 0, ',', '.') ?>
   </div>
 </div>
+<style>
+  /* === BASE MAIN CONTENT === */
+.main-content {
+  transition: margin-left 0.3s ease, padding 0.3s ease;
+  width: 100%;
+  margin-left: 230px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+/* Saat sidebar collapse */
+.sidebar.collapsed ~ .main-content {
+  margin-left: 70px;
+}
+
+/* === MODE NORMAL === */
+.layout-normal {
+  padding: 30px 40px;
+}
+
+/* === MODE FULL WIDTH === */
+.layout-full {
+  padding: 15px 10px;
+  max-width: 100%;
+}
+
+.layout-full .table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.layout-full .container,
+.layout-full .container-fluid {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+</style>

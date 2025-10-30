@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 29, 2025 at 08:54 PM
+-- Generation Time: Oct 30, 2025 at 05:10 PM
 -- Server version: 5.7.33
 -- PHP Version: 5.6.40
 
@@ -45,7 +45,10 @@ CREATE TABLE `tb_anggaran_sekolah` (
 
 INSERT INTO `tb_anggaran_sekolah` (`id`, `sekolah_id`, `sumber_id`, `tahun_id`, `jumlah`, `tersisa`, `created_at`, `updated_at`) VALUES
 (1, 2, 1, 1, '1000000.00', '1000000.00', '2025-10-27 20:09:47', '2025-10-27 21:09:42'),
-(2, 2, 2, 1, '2000000.00', '2000000.00', '2025-10-27 21:45:50', '2025-10-27 21:45:50');
+(2, 2, 2, 1, '2000000.00', '2000000.00', '2025-10-27 21:45:50', '2025-10-27 21:45:50'),
+(3, 3, 1, 1, '10000000.00', '10000000.00', '2025-10-28 13:07:55', '2025-10-28 13:07:55'),
+(4, 4, 1, 2, '2000000.00', '2000000.00', '2025-10-28 13:38:20', '2025-10-28 13:38:20'),
+(5, 3, 2, 1, '20000000.00', '20000000.00', '2025-10-29 14:26:45', '2025-10-29 14:26:45');
 
 -- --------------------------------------------------------
 
@@ -198,6 +201,7 @@ CREATE TABLE `tb_pengeluaran` (
   `uraian` text,
   `jumlah` decimal(15,2) NOT NULL,
   `platform` enum('SIPLAH','Non_SIPLAH') DEFAULT 'Non_SIPLAH',
+  `marketplace` varchar(100) DEFAULT NULL,
   `nama_toko` varchar(150) DEFAULT NULL,
   `alamat_toko` text,
   `pembayaran` enum('Tunai','Non-Tunai') DEFAULT 'Tunai',
@@ -205,6 +209,7 @@ CREATE TABLE `tb_pengeluaran` (
   `nama_bank` varchar(100) DEFAULT NULL,
   `bukti` varchar(255) DEFAULT NULL,
   `status` enum('Menunggu','Disetujui','Ditolak') DEFAULT 'Menunggu',
+  `updated_at` datetime DEFAULT NULL,
   `tahun` int(4) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -213,8 +218,42 @@ CREATE TABLE `tb_pengeluaran` (
 -- Dumping data for table `tb_pengeluaran`
 --
 
-INSERT INTO `tb_pengeluaran` (`id`, `user_id`, `invoice_no`, `sekolah_id`, `sumber_anggaran_id`, `kegiatan`, `kodering_id`, `jenis_belanja_id`, `tahun_anggaran`, `tanggal`, `uraian`, `jumlah`, `platform`, `nama_toko`, `alamat_toko`, `pembayaran`, `no_rekening`, `nama_bank`, `bukti`, `status`, `tahun`, `created_at`) VALUES
-(11, 2, '1111', 2, 1, 'sumatif', 39, 1, 2025, '2025-10-27', 'pensil', '40000.00', 'SIPLAH', 'CV Bima Indotama', 'cirebon', 'Tunai', '01223', 'BJB', NULL, 'Menunggu', 2025, '2025-10-27 04:50:13');
+INSERT INTO `tb_pengeluaran` (`id`, `user_id`, `invoice_no`, `sekolah_id`, `sumber_anggaran_id`, `kegiatan`, `kodering_id`, `jenis_belanja_id`, `tahun_anggaran`, `tanggal`, `uraian`, `jumlah`, `platform`, `marketplace`, `nama_toko`, `alamat_toko`, `pembayaran`, `no_rekening`, `nama_bank`, `bukti`, `status`, `updated_at`, `tahun`, `created_at`) VALUES
+(11, 2, '1111', 2, 1, 'sumatif', 39, 1, 2025, '2025-10-27', 'pensil', '40000.00', 'SIPLAH', NULL, 'CV Bima Indotama', 'cirebon', 'Tunai', '01223', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-27 04:50:13'),
+(16, 2, 'Invois0989', 2, 1, 'Kegiatan Kesiswaan', 54, 1, 2025, '2025-02-01', 'Pensil 2b', '20000.00', 'Non_SIPLAH', NULL, 'Toko Maju Jaya', 'Jl. Merdeka No.12', 'Tunai', '198899', 'Bank BRI', NULL, 'Menunggu', NULL, 2025, '2025-10-27 06:49:12'),
+(18, 2, 'Invois0989', 2, 1, 'Kegiatan Kesiswaan', 54, 1, 2025, '2025-02-01', 'Pulpen', '50000.00', 'SIPLAH', NULL, 'Toko Maju Jaya', 'Jl. Merdeka No.12', 'Tunai', '198899', 'Bank BRI', NULL, 'Menunggu', NULL, 2025, '2025-10-27 13:35:27'),
+(19, 3, '2222', 3, 1, 'sumatif', 50, 1, 2025, '2025-10-28', 'saklar', '10000.00', 'SIPLAH', NULL, 'CV Indotar', 'cirebon', 'Tunai', '112233', 'BJB', NULL, 'Disetujui', '2025-10-30 12:21:51', 2025, '2025-10-28 07:25:10'),
+(23, 3, '2222', 3, 1, 'Sumatif', 50, 1, 2025, '2025-10-28', 'Lampu tornado', '60000.00', 'SIPLAH', NULL, 'CV Indotar', 'Jl. Merdeka No.12', 'Tunai', '112233', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 06:59:29'),
+(26, 3, 'INVKesiswaan', 3, 1, 'kegiatan Kurikulum', 49, 1, 2025, '2025-10-29', 'Semen Tiga roda', '100000.00', 'SIPLAH', 'Tokoladang', 'CV Bima Indotama', 'cirebon', 'Tunai', 'VA11255667788', 'BJB', NULL, 'Disetujui', '2025-10-30 12:21:51', 2025, '2025-10-29 07:02:30'),
+(27, 3, 'INVKesiswaan', 3, 1, 'kegiatan Kurikulum', 49, 1, 2025, '2025-10-29', 'Pasir', '1000000.00', 'SIPLAH', 'Tokoladang', 'CV Bima Indotama', 'cirebon', 'Tunai', 'VA11255667788', 'BJB', NULL, 'Disetujui', '2025-10-30 12:21:51', 2025, '2025-10-29 07:02:30'),
+(28, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Box File', '235000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(29, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Cutter Besar L500 Joyco', '444000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(30, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Flashdisk 64 GB Sandisk', '1210000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(31, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Gunting Besar', '180000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(32, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Isi Cutter Besar Joyko', '132000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(33, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Isi strapler kecil', '58000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(34, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Kertas A4 75 gr CP', '2040000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(35, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Kertas F4 75 gr CP', '2280000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(36, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Kertas HVS Warna A4 70gr Sidu', '352500.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(37, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Kertas HVS Warna F4 70gr Sidu', '425000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(38, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Kertas Foto Blueprint', '108000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(39, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Lakban Hitam Besar Daimaru', '210000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(40, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Lem Glukol Kecil', '99000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(41, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Map Plastik Kancing', '234000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(42, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Map Snailhekter Folio', '564000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(43, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Pemotong Kertas A3', '325000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(44, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Pulpen Tizo Biru', '318000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(45, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Pulpen Standard AE7 Hitam', '125000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(46, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Refil Tinta Whiteboard HQ Line', '1500000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(47, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Spidol whiteboard', '1120000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(48, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Stapler Kecil No. 10 Joyko', '210900.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(49, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Stopmap Biasa', '222000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(50, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Tinta Epson 003 Hitam', '1000000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(51, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Tinta Epson 003 warna', '1000000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(52, 3, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, 'Belanja ATK Sekolah', 39, 1, 2025, '2025-10-26', 'Tinta Stampel Joyko', '105000.00', 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 07:06:31'),
+(53, 3, 'Inoice/KKA-KKI/10', 3, 2, 'KKA', 44, 3, 2025, '2025-10-29', 'Perjalanan dinas Pelatihan KKA', '700000.00', 'Non_SIPLAH', NULL, 'Didi Jumadi', 'Kuningan', 'Tunai', '0122738812', 'BJB', NULL, 'Disetujui', '2025-10-30 12:21:51', 2025, '2025-10-29 07:28:35'),
+(54, 3, '8001858/INV/PO68DCC7FA32259/PROFORMA', 3, 1, 'Belanja modal Pemasaran', 52, 2, 2025, '2025-10-29', 'Printer kasir', '1300000.00', 'SIPLAH', NULL, 'CV Bhineka Jaya Sakti', 'Cirebon', 'Tunai', '1845000008001858', 'BJB', NULL, 'Disetujui', '2025-10-30 12:21:51', 2025, '2025-10-29 08:10:06'),
+(55, 3, '8001858/INV/PO68DCC7FA32259/PROFORMA', 3, 1, 'Belanja modal Pemasaran', 52, 2, 2025, '2025-10-29', 'Scan barcode Kasir', '1500000.00', 'SIPLAH', NULL, 'CV Bhineka Jaya Sakti', 'Cirebon', 'Tunai', '1845000008001858', 'BJB', NULL, 'Menunggu', NULL, 2025, '2025-10-29 08:10:06');
 
 -- --------------------------------------------------------
 
@@ -232,6 +271,7 @@ CREATE TABLE `tb_rekap_pembelanjaan` (
   `nilai_transaksi` decimal(15,2) DEFAULT '0.00',
   `jenis_belanja_id` int(10) UNSIGNED DEFAULT NULL,
   `platform` enum('SIPLAH','Non_SIPLAH') DEFAULT 'Non_SIPLAH',
+  `marketplace` varchar(100) DEFAULT NULL,
   `nama_toko` varchar(150) DEFAULT NULL,
   `alamat_toko` text,
   `pembayaran` enum('Tunai','Non-Tunai') DEFAULT 'Tunai',
@@ -244,9 +284,14 @@ CREATE TABLE `tb_rekap_pembelanjaan` (
 -- Dumping data for table `tb_rekap_pembelanjaan`
 --
 
-INSERT INTO `tb_rekap_pembelanjaan` (`id`, `invoice_no`, `sekolah_id`, `sumber_anggaran_id`, `tanggal`, `kegiatan`, `nilai_transaksi`, `jenis_belanja_id`, `platform`, `nama_toko`, `alamat_toko`, `pembayaran`, `no_rekening`, `nama_bank`, `created_at`) VALUES
-(3, '1111', 2, 1, '2025-10-26', 'sumatif', '40000.00', 1, 'SIPLAH', 'CV Bima Indotama', 'cirebon', 'Tunai', '01223', 'BJB', '2025-10-26 13:22:39'),
-(7, 'Invois0989', 2, 1, '2025-02-01', 'Kegiatan Kesiswaan', '70000.00', 1, 'Non_SIPLAH', 'Toko Maju Jaya', 'Jl. Merdeka No.12', 'Tunai', '198899', 'Bank BRI', '2025-10-27 06:49:12');
+INSERT INTO `tb_rekap_pembelanjaan` (`id`, `invoice_no`, `sekolah_id`, `sumber_anggaran_id`, `tanggal`, `kegiatan`, `nilai_transaksi`, `jenis_belanja_id`, `platform`, `marketplace`, `nama_toko`, `alamat_toko`, `pembayaran`, `no_rekening`, `nama_bank`, `created_at`) VALUES
+(3, '1111', 2, 1, '2025-10-26', 'sumatif', '40000.00', 1, 'SIPLAH', NULL, 'CV Bima Indotama', 'cirebon', 'Tunai', '01223', 'BJB', '2025-10-26 13:22:39'),
+(7, 'Invois0989', 2, 1, '2025-02-01', 'Kegiatan Kesiswaan', '70000.00', 1, 'Non_SIPLAH', NULL, 'Toko Maju Jaya', 'Jl. Merdeka No.12', 'Tunai', '198899', 'Bank BRI', '2025-10-27 06:49:12'),
+(8, '2222', 3, 1, '2025-10-28', 'sumatif', '70000.00', 1, 'SIPLAH', NULL, 'CV Indotar', 'cirebon', 'Tunai', '112233', 'BJB', '2025-10-28 07:25:10'),
+(11, 'INVKesiswaan', 3, 1, '2025-10-29', 'kegiatan Kurikulum', '1100000.00', 1, 'SIPLAH', 'Tokoladang', 'CV Bima Indotama', 'cirebon', 'Tunai', 'VA11255667788', 'BJB', '2025-10-29 07:02:30'),
+(12, '8001474/INV/PO68DCC49F9135B/PROFORMA', 3, 1, '2025-10-26', 'Belanja ATK Sekolah', '14497400.00', 1, 'SIPLAH', NULL, 'PT Indotar gentra Raya', 'Ancaran-Kuningan', 'Tunai', '1845000008001474', 'BJB', '2025-10-29 07:06:31'),
+(13, 'Inoice/KKA-KKI/10', 3, 2, '2025-10-29', 'KKA', '700000.00', 3, 'Non_SIPLAH', NULL, 'Didi Jumadi', 'Kuningan', 'Tunai', '0122738812', 'BJB', '2025-10-29 07:28:35'),
+(14, '8001858/INV/PO68DCC7FA32259/PROFORMA', 3, 1, '2025-10-29', 'Belanja modal Pemasaran', '2800000.00', 2, 'SIPLAH', NULL, 'CV Bhineka Jaya Sakti', 'Cirebon', 'Tunai', '1845000008001858', 'BJB', '2025-10-29 08:10:06');
 
 -- --------------------------------------------------------
 
@@ -321,7 +366,9 @@ CREATE TABLE `tb_user` (
 
 INSERT INTO `tb_user` (`id`, `nama`, `jenjang`, `email`, `no_kontrol`, `password`, `role`, `cabang_id`, `aktif`, `created_at`, `updated_at`, `jenjang_id`, `alamat`, `kepala_sekolah`, `bendahara`) VALUES
 (1, 'Admin Dinas', NULL, 'admin@dinas.go.id', 'DINAS01', '$2y$10$sTZULfhsHPpEwHSOTtw.MeYaUuRlp.2DLwXe6FA2Ud.WXrWUJieKW', 'admin', NULL, 1, '2025-10-26 17:18:32', NULL, NULL, NULL, NULL, NULL),
-(2, 'SDN 01 Contoh', '1', 'sdn01@sekolah.sch.id', 'SEKOLAH01', '$2y$10$3iUhZWPGFUU5WQkdl34ETuZrznWIuT.zKR1uxQaoytAqG6ZM5Up1m', 'sekolah', NULL, 1, '2025-10-26 18:05:52', NULL, 1, NULL, NULL, NULL);
+(2, 'SDN 01 Contoh', '1', 'sdn01@sekolah.sch.id', 'SEKOLAH01', '$2y$10$3iUhZWPGFUU5WQkdl34ETuZrznWIuT.zKR1uxQaoytAqG6ZM5Up1m', 'sekolah', NULL, 1, '2025-10-26 18:05:52', NULL, 1, NULL, NULL, NULL),
+(3, 'SMK Negeri 1 Cilimus', NULL, 'smkclimus@gmail.com', '20279827', '$2y$10$.C5vUjAlhw.1jm92Dy/J4OxuHvJnzpLYsSctdSNAnbt/FnSFSjrJW', 'sekolah', 10, 1, '2025-10-28 11:43:27', NULL, 4, 'Jl. Eyang Kyai Hasan Maulani', 'Elpasa', 'Sukirman, S.Pd'),
+(4, 'SMK kita', NULL, 'smkkita@gmail.com', '20279828', '$2y$10$3wFsvBPYPurPrKW/5po2w.ivUsY8Ut9d5M2gIZ6wS4bJiKvKkRX9a', 'sekolah', 10, 1, '2025-10-28 11:44:39', NULL, 4, 'Danalampah regency', 'Nazmudin', 'Zaini');
 
 --
 -- Indexes for dumped tables

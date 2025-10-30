@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="content-wrapper mt-4 px-4">
   <h4 class="mb-4"><?php echo $title; ?></h4>
 
   <?php if ($this->session->flashdata('success')): ?>

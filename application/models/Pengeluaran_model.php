@@ -181,6 +181,63 @@ public function sync_rekap() {
         }
     }
 }
+// Hitung total data untuk pagination
+public function count_all_filtered($tahun_id, $jenjang = null, $sekolah_id = null, $status = null) {
+    $tahun_row = $this->db->get_where('tb_tahun_anggaran', ['id' => $tahun_id])->row();
+    $tahun = $tahun_row ? $tahun_row->tahun : date('Y');
 
+    $this->db->from('tb_pengeluaran p');
+    $this->db->join('tb_user u', 'p.sekolah_id = u.id', 'left');
+
+    $this->db->where('p.tahun_anggaran', $tahun);
+
+    if (!empty($jenjang)) {
+        $this->db->where('u.jenjang', $jenjang);
+    }
+    if (!empty($sekolah_id)) {
+        $this->db->where('u.id', $sekolah_id);
+    }
+    if (!empty($status)) {
+        $this->db->where('p.status', $status);
+    }
+
+    return $this->db->count_all_results();
+}
+
+// Ambil data pengeluaran dengan filter + limit pagination
+public function get_all_with_filter($tahun_id, $jenjang = null, $sekolah_id = null, $limit = 15, $start = 0, $status = null) {
+    $tahun_row = $this->db->get_where('tb_tahun_anggaran', ['id' => $tahun_id])->row();
+    $tahun = $tahun_row ? $tahun_row->tahun : date('Y');
+
+    $this->db->select('
+        p.*, 
+        u.nama AS nama_sekolah, 
+        u.jenjang, 
+        k.kode, 
+        k.nama AS nama_kodering, 
+        sa.nama AS sumber_anggaran,
+        jb.nama AS nama_jenis_belanja
+    ');
+    $this->db->from('tb_pengeluaran p');
+    $this->db->join('tb_user u', 'p.sekolah_id = u.id', 'left');
+    $this->db->join('tb_kodering k', 'p.kodering_id = k.id', 'left');
+    $this->db->join('tb_sumber_anggaran sa', 'p.sumber_anggaran_id = sa.id', 'left');
+    $this->db->join('tb_kategori_belanja jb', 'p.jenis_belanja_id = jb.id', 'left');
+
+    $this->db->where('p.tahun_anggaran', $tahun);
+
+    if (!empty($sekolah_id)) {
+        $this->db->where('u.id', $sekolah_id);
+    }
+
+    if (!empty($status)) {
+        $this->db->where('p.status', $status);
+    }
+
+    $this->db->order_by('p.tanggal', 'DESC');
+    $this->db->limit($limit, $start);
+
+    return $this->db->get()->result();
+}
 
 }
