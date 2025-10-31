@@ -51,6 +51,7 @@
   </a>
 </div>
 
+  <div class="table-responsive">
   <table class="table table-bordered table-hover table-sm">
     <thead class="thead-light">
       <tr>
@@ -87,6 +88,8 @@
       <?php endif; ?>
     </tbody>
   </table>
+</div>
+
 
   <div class="alert alert-info mt-3">
     <strong>Total Penggunaan Tahun <?= $tahun_aktif ?>:</strong> 
@@ -134,6 +137,34 @@
 html, body {
   width: 100%;
   overflow-x: hidden;
+}
+/* === Responsive Scroll untuk Tabel === */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  min-width: 900px; /* biar tidak patah di HP */
+}
+
+.table th,
+.table td {
+  white-space: nowrap; /* biar kolom tidak pecah ke bawah */
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa;
 }
 
 </style>

@@ -5,6 +5,11 @@
 <meta http-equiv="Expires" content="0" />
 
 <head>
+  <!-- Favicon -->
+<link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon.png') ?>">
+<link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/img/apple-touch-icon.png') ?>">
+<meta name="theme-color" content="#007bff">
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sipelakor - Sistem Pelaporan Keuangan</title>
@@ -14,7 +19,12 @@
   const csrfName = '<?= $this->security->get_csrf_token_name(); ?>';
   const csrfHash = '<?= $this->security->get_csrf_hash(); ?>';
 </script>
+
 </head>
+<!-- Tombol buka sidebar (muncul hanya di HP) -->
+<button class="btn btn-light d-lg-none mr-2" id="openSidebar">
+  <i class="fa fa-bars"></i>
+</button>
 
 <style>
   .navbar .mx-auto {
@@ -63,3 +73,18 @@ if ($this->session->userdata('tahun_id')) {
 
 <div class="container-fluid">
   <div class="row">
+    <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const openSidebar = document.getElementById('openSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+
+    if (openSidebar) {
+      openSidebar.addEventListener('click', function() {
+        sidebar.classList.add('active');
+        backdrop.style.display = 'block';
+      });
+    }
+  });
+</script>
+

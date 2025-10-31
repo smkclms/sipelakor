@@ -127,6 +127,104 @@
   font-size: 1.6rem;
 }
 
+/* === RESPONSIVE KHUSUS MOBILE & TABLET === */
+
+/* Tablet dan mobile (≤992px) */
+@media (max-width: 992px) {
+  /* Sidebar di luar layar secara default */
+  .sidebar {
+    left: -230px;
+    height: 100%;
+    transition: left 0.3s ease-in-out;
+    z-index: 1050;
+  }
+
+  /* Saat aktif, sidebar muncul slide-in */
+  .sidebar.active {
+    left: 0;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.15);
+  }
+
+  /* Backdrop muncul di belakang sidebar */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 1040;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .sidebar.active + .sidebar-backdrop {
+    display: block;
+    opacity: 1;
+  }
+
+  /* Konten utama tidak terdorong di mobile */
+  .main-content {
+    margin-left: 0 !important;
+    transition: margin 0.3s ease;
+    padding: 15px;
+  }
+
+  /* Sidebar header lebih kecil di mobile */
+  .sidebar-header h4 {
+    font-size: 1.2rem;
+  }
+
+  .sidebar-header small {
+    font-size: 0.75rem;
+  }
+
+  /* Link di sidebar lebih rapat */
+  .sidebar .nav-link {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+  }
+
+  /* Ikon sedikit lebih kecil */
+  .sidebar .nav-link i {
+    width: 20px;
+    margin-right: 8px;
+    font-size: 1rem;
+  }
+
+  /* Tombol toggle lebih besar dan clickable */
+  .sidebar-toggle {
+    padding: 14px 0;
+    font-size: 1.2rem;
+  }
+
+  /* Hilangkan scroll horizontal */
+  body, html {
+    overflow-x: hidden;
+  }
+}
+
+/* Mobile kecil (≤576px) */
+@media (max-width: 576px) {
+  .sidebar {
+    width: 210px;
+  }
+
+  .sidebar .nav-link {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .sidebar-header h4 {
+    font-size: 1rem;
+  }
+
+  .sidebar-header small {
+    font-size: 0.7rem;
+  }
+
+  .sidebar-toggle {
+    font-size: 1.1rem;
+    padding: 12px 0;
+  }
+}
 
 </style>
 

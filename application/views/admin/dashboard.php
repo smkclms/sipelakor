@@ -302,5 +302,132 @@ foreach ($by_sumber as $temp) {
   padding-right: 0 !important;
 }
 
+/* === RESPONSIVE OPTIMIZATION (TAMBAHAN SAJA) === */
+
+/* Tablet (≤992px) */
+@media (max-width: 992px) {
+  .content-wrapper {
+    padding: 15px 20px !important;
+  }
+
+  .text-center.mb-4 h3 {
+    font-size: 1.5rem;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .card-body p,
+  .list-group-item {
+    font-size: 0.9rem;
+  }
+
+  .progress {
+    height: 6px;
+  }
+}
+
+/* Mobile (≤768px) */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 10px 12px !important;
+  }
+
+  h3.fw-bold {
+    font-size: 1.25rem;
+  }
+
+  .text-muted {
+    font-size: 0.9rem;
+  }
+
+  /* 3 card utama biar turun ke bawah */
+  .row.g-4.mb-4 > div {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    border-radius: 10px;
+  }
+
+  .card .card-body {
+    padding: 1rem;
+  }
+
+  .card h5,
+  .card h6 {
+    font-size: 1rem;
+  }
+
+  .list-group-item {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .progress {
+    height: 6px;
+  }
+
+  /* Menu cepat */
+  .list-group-item-action {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Pastikan jarak antar section cukup */
+  h5.fw-bold {
+    font-size: 1.05rem;
+    margin-top: 1.5rem !important;
+  }
+}
+
+/* Extra Small (≤576px) */
+@media (max-width: 576px) {
+  .content-wrapper {
+    padding: 8px 10px !important;
+  }
+
+  .text-center.mb-4 h3 {
+    font-size: 1.1rem;
+  }
+
+  .text-muted {
+    font-size: 0.8rem;
+  }
+
+  .card-body p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .list-group-item {
+    font-size: 0.8rem;
+  }
+
+  .progress {
+    height: 5px;
+  }
+
+  .fw-bold {
+    font-weight: 600 !important;
+  }
+
+  /* Perkecil padding antar card biar nggak terlalu panjang */
+  .card-grid {
+    gap: 0.75rem;
+  }
+
+  .card .card-body {
+    padding: 0.75rem;
+  }
+}
 
 </style>
