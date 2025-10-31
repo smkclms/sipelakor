@@ -156,6 +156,12 @@
 </div>
     <ul class="nav flex-column pt-3">
       <li class="nav-item">
+  <a class="nav-link" href="<?= base_url('profil') ?>">
+    <i class="fas fa-user-circle"></i> <span>Profil Saya</span>
+  </a>
+</li>
+
+      <li class="nav-item">
         <a class="nav-link" href="<?= base_url('sekolah') ?>">
           <i class="fas fa-home"></i> <span>Dashboard</span>
         </a>

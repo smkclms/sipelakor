@@ -78,6 +78,10 @@ public function get_by_jenjang($jenjang_id)
                   ->get('tb_user')
                   ->result();
 }
+public function get_by_id($id)
+{
+    return $this->db->get_where('tb_user', ['id' => $id])->row();
+}
 
 
 }

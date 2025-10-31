@@ -67,13 +67,13 @@ public function update($id) {
 
     $this->User_model->update($id, $data);
     $this->session->set_flashdata('success', 'Data pengguna berhasil diperbarui!');
-    redirect('admin/user_management');
+    redirect('user_management');
 }
 
 
     public function delete($id) {
         $this->db->delete('tb_user', ['id' => $id]);
         $this->session->set_flashdata('success', 'Sekolah berhasil dihapus!');
-        redirect('admin/user_management');
+        redirect('user_management');
     }
 }
