@@ -101,21 +101,26 @@ foreach ($by_sumber as $temp) {
 ?>
 
 <?php foreach ($by_sumber as $r): 
-  $persen = ($total_pengeluaran > 0 && isset($r->total)) ? round(($r->total / $total_pengeluaran) * 100) : 0;
+  $pagu = isset($r->pagu) ? $r->pagu : 0;
+  $pengeluaran = isset($r->total) ? $r->total : 0;
+  $persen = ($pagu > 0) ? round(($pengeluaran / $pagu) * 100, 2) : 0;
   $warna = $persen >= 80 ? 'bg-danger' : ($persen >= 50 ? 'bg-warning' : 'bg-success');
 ?>
 
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body">
-          <h6 class="fw-bold text-primary"><?= $r->sumber ?></h6>
-          <h5>Rp <?= number_format($r->total, 0, ',', '.') ?></h5>
-          <div class="text-small text-muted mb-1">Proporsi: <?= $persen ?>%</div>
-          <div class="progress">
-            <div class="progress-bar <?= $warna ?>" style="width: <?= $persen ?>%"></div>
-          </div>
-        </div>
+  <div class="card shadow-sm border-0 h-100">
+    <div class="card-body">
+      <h6 class="fw-bold text-primary"><?= $r->sumber ?></h6>
+      <p class="mb-1 text-muted">Jumlah Anggaran: <strong>Rp <?= number_format($pagu, 0, ',', '.') ?></strong></p>
+      <p class="mb-2 text-muted">Pengeluaran: <strong>Rp <?= number_format($pengeluaran, 0, ',', '.') ?></strong></p>
+      <div class="text-small text-muted mb-1">Realisasi: <?= $persen ?>%</div>
+      <div class="progress">
+        <div class="progress-bar <?= $warna ?>" style="width: <?= $persen ?>%"></div>
       </div>
-    <?php endforeach; ?>
+    </div>
+  </div>
+
+<?php endforeach; ?>
+
   </div>
 </div>
 <!-- ======================================================= -->

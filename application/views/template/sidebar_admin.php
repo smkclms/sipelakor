@@ -159,6 +159,12 @@
         </a>
       </li>
       <li class="nav-item">
+    <a class="nav-link" href="<?= base_url('kategori_belanja') ?>">
+        <i class="fas fa-tags"></i>
+        <span>Kategori Belanja</span>
+    </a>
+</li>
+      <li class="nav-item">
         <a class="nav-link" href="<?= base_url('pengeluaran_admin') ?>">
           <i class="fas fa-check-circle"></i> <span>Verifikasi Pengeluaran</span>
         </a>

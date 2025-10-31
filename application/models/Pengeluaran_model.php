@@ -138,7 +138,7 @@ public function sync_rekap() {
 
         // Ambil detail dari salah satu baris pengeluaran (untuk salin data tambahan)
         $detail = $this->db->select('
-                kegiatan, tanggal, platform, nama_toko, alamat_toko, pembayaran,
+                kegiatan, tanggal, platform, marketplace, nama_toko, alamat_toko, pembayaran,
                 no_rekening, nama_bank, jenis_belanja_id, sumber_anggaran_id
             ')
             ->from('tb_pengeluaran')
@@ -148,7 +148,7 @@ public function sync_rekap() {
             ->row();
 
         if (!$exists) {
-            // ✅ Buat entri baru ke rekap, lengkap dengan jenis_belanja_id dan sumber_anggaran_id
+            // ✅ Buat entri baru ke rekap, lengkap dengan kolom marketplace
             $this->db->insert('tb_rekap_pembelanjaan', [
                 'invoice_no'         => $row->invoice_no,
                 'sekolah_id'         => $row->sekolah_id,
@@ -158,6 +158,7 @@ public function sync_rekap() {
                 'sumber_anggaran_id' => $detail ? $detail->sumber_anggaran_id : null,
                 'nilai_transaksi'    => $total,
                 'platform'           => $detail ? $detail->platform : 'Non_SIPLAH',
+                'marketplace'        => $detail ? $detail->marketplace : null,
                 'nama_toko'          => $detail ? $detail->nama_toko : '-',
                 'alamat_toko'        => $detail ? $detail->alamat_toko : '-',
                 'pembayaran'         => $detail ? $detail->pembayaran : 'Tunai',
@@ -165,7 +166,7 @@ public function sync_rekap() {
                 'nama_bank'          => $detail ? $detail->nama_bank : null
             ]);
         } else {
-            // ✅ Jika sudah ada, update total + isi kolom kosong jika belum ada
+            // ✅ Jika sudah ada, update total + marketplace (kalau kosong)
             $update_data = ['nilai_transaksi' => $total];
 
             if (empty($exists->jenis_belanja_id) && !empty($detail->jenis_belanja_id)) {
@@ -176,11 +177,16 @@ public function sync_rekap() {
                 $update_data['sumber_anggaran_id'] = $detail->sumber_anggaran_id;
             }
 
+            if (empty($exists->marketplace) && !empty($detail->marketplace)) {
+                $update_data['marketplace'] = $detail->marketplace;
+            }
+
             $this->db->where('invoice_no', $row->invoice_no)
                      ->update('tb_rekap_pembelanjaan', $update_data);
         }
     }
 }
+
 // Hitung total data untuk pagination
 public function count_all_filtered($tahun_id, $jenjang = null, $sekolah_id = null, $status = null) {
     $tahun_row = $this->db->get_where('tb_tahun_anggaran', ['id' => $tahun_id])->row();

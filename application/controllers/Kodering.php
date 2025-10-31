@@ -102,7 +102,7 @@ public function download_template()
     // Header
     $sheet->setCellValue('A1', 'Kode');
     $sheet->setCellValue('B1', 'Nama Kodering');
-    $sheet->setCellValue('C1', 'Kategori (1=Barang, 2=Modal, 3=Jasa)');
+    $sheet->setCellValue('C1', 'Kategori (1=Barang, 2=Modal Alat dan Mesin, 3=Jasa, 4=Modal Aset)');
 
     $style_header = [
         'font' => ['bold' => true],

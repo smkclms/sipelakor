@@ -376,7 +376,7 @@ public function download_template()
     $tahun = $tahun_aktif ? $tahun_aktif->tahun : date('Y');
 
     $this->load->library('PHPExcel_lib');
-    $this->load->model(['Kodering_model', 'Kategori_belanja_model']);
+    $this->load->model(['Kodering_model', 'Kategori_belanja_model', 'Sumber_anggaran_model']);
 
     $excel = new PHPExcel();
     $excel->getProperties()->setCreator('Sipelakor')
@@ -416,7 +416,7 @@ public function download_template()
       'Kegiatan Sumatif',
       'INV-'.$tahun.'-001',
       $tahun.'-01-01',
-      '0001 - Alat Tulis Kantor',
+      '0123456 - Nama Kodering',
       'Belanja Barang Habis Pakai',
       'ATK Ujian',
       '150000',
@@ -451,7 +451,17 @@ public function download_template()
         $j++;
     }
 
-    // Sheet 4: Petunjuk Pengisian
+    // ✅ Sheet 4: Data Sumber Anggaran
+    $sheetSA = $excel->createSheet();
+    $sheetSA->setTitle('DataSumberAnggaran');
+    $sumber_list = $this->Sumber_anggaran_model->get_all();
+    $s = 1;
+    foreach ($sumber_list as $sa) {
+        $sheetSA->setCellValue('A' . $s, $sa->nama);
+        $s++;
+    }
+
+    // Sheet 5: Petunjuk Pengisian
     $sheet4 = $excel->createSheet();
     $sheet4->setTitle('Petunjuk');
     $sheet4->setCellValue('A1', 'PETUNJUK PENGISIAN TEMPLATE PENGELUARAN');
@@ -462,7 +472,7 @@ public function download_template()
         "1. Jangan ubah urutan kolom di sheet 'Template Pengeluaran'.",
         "2. Isi mulai baris ke-2. Baris pertama adalah header.",
         "3. Format tanggal wajib: YYYY-MM-DD (contoh: {$tahun}-01-15).",
-        "4. Kolom 'Kodering' dan 'Jenis Belanja' memiliki dropdown otomatis.",
+        "4. Kolom 'Kodering', 'Jenis Belanja', 'Sumber Anggaran', dan 'Platform' memiliki dropdown otomatis.",
         "5. Kolom 'Jumlah' isi angka tanpa Rp, titik, atau koma.",
         "6. Kolom 'Tahun' akan otomatis terisi tahun aktif ({$tahun}).",
         "7. Platform hanya: SIPLAH / Non_SIPLAH.",
@@ -476,50 +486,74 @@ public function download_template()
         $row += 2;
     }
 
-    // Sembunyikan DataKodering & JenisBelanja
+    // 🔒 Sembunyikan sheet data
+    $excel->getSheetByName('DataSumberAnggaran')->setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);
     $excel->getSheetByName('DataKodering')->setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);
     $excel->getSheetByName('JenisBelanja')->setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);
 
     // Dropdown Kodering (kolom E)
-$validation_kodering = $sheet->getCell('E2')->getDataValidation();
-$validation_kodering->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
-$validation_kodering->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
-$validation_kodering->setAllowBlank(true);
-$validation_kodering->setShowDropDown(true);
-$validation_kodering->setFormula1('=DataKodering!$A$1:$A$' . ($r - 1));
-for ($i = 2; $i <= 500; $i++) {
-    $sheet->getCell("E$i")->setDataValidation(clone $validation_kodering);
+    $validation_kodering = $sheet->getCell('E2')->getDataValidation();
+    $validation_kodering->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
+    $validation_kodering->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
+    $validation_kodering->setAllowBlank(true);
+    $validation_kodering->setShowDropDown(true);
+    $validation_kodering->setFormula1('=DataKodering!$A$1:$A$' . ($r - 1));
+    for ($i = 2; $i <= 500; $i++) {
+        $sheet->getCell("E$i")->setDataValidation(clone $validation_kodering);
+    }
+
+    // Dropdown Jenis Belanja (kolom F)
+    $validation_jb = $sheet->getCell('F2')->getDataValidation();
+    $validation_jb->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
+    $validation_jb->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
+    $validation_jb->setAllowBlank(true);
+    $validation_jb->setShowDropDown(true);
+    $validation_jb->setFormula1('=JenisBelanja!$A$1:$A$' . ($j - 1));
+    for ($i = 2; $i <= 500; $i++) {
+        $sheet->getCell("F$i")->setDataValidation(clone $validation_jb);
+    }
+
+    // ✅ Dropdown Sumber Anggaran (kolom A)
+    $validation_sa = $sheet->getCell('A2')->getDataValidation();
+    $validation_sa->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
+    $validation_sa->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
+    $validation_sa->setAllowBlank(true);
+    $validation_sa->setShowDropDown(true);
+    $validation_sa->setFormula1('=DataSumberAnggaran!$A$1:$A$' . ($s - 1));
+    for ($i = 2; $i <= 500; $i++) {
+        $sheet->getCell("A$i")->setDataValidation(clone $validation_sa);
+    }
+
+    // ✅ Dropdown Platform (kolom I: SIPLAH / Non_SIPLAH)
+    $validation_platform = $sheet->getCell('I2')->getDataValidation();
+    $validation_platform->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
+    $validation_platform->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
+    $validation_platform->setAllowBlank(true);
+    $validation_platform->setShowDropDown(true);
+    $validation_platform->setFormula1('"SIPLAH,Non_SIPLAH"');
+    for ($i = 2; $i <= 500; $i++) {
+        $sheet->getCell("I$i")->setDataValidation(clone $validation_platform);
+    }
+
+    // ✅ Dropdown Marketplace (kolom J, tetap seperti semula)
+    for ($i = 2; $i <= 500; $i++) {
+        $sheet->getCell("J$i")->getDataValidation()
+              ->setType(PHPExcel_Cell_DataValidation::TYPE_LIST)
+              ->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP)
+              ->setAllowBlank(true)
+              ->setShowDropDown(true)
+              ->setFormula1('"Blibli,Toko Ladang,Pesona Edu,Belanja Sekolah,Lainnya"');
+    }
+
+    // Output file Excel
+    if (ob_get_length()) { @ob_end_clean(); }
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="Template_Pengeluaran_Sekolah.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+    $writer->save('php://output');
+    exit;
 }
 
-// Dropdown Jenis Belanja (kolom F)
-$validation_jb = $sheet->getCell('F2')->getDataValidation();
-$validation_jb->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
-$validation_jb->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
-$validation_jb->setAllowBlank(true);
-$validation_jb->setShowDropDown(true);
-$validation_jb->setFormula1('=JenisBelanja!$A$1:$A$' . ($j - 1));
-for ($i = 2; $i <= 500; $i++) {
-    $sheet->getCell("F$i")->setDataValidation(clone $validation_jb);
-}
-
-// ✅ Tambahkan di sini:
-for ($i = 2; $i <= 500; $i++) {
-    $sheet->getCell("J$i")->getDataValidation()
-          ->setType(PHPExcel_Cell_DataValidation::TYPE_LIST)
-          ->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP)
-          ->setAllowBlank(true)
-          ->setShowDropDown(true)
-          ->setFormula1('"Blibli,Toko Ladang,Pesona Edu,Belanja Sekolah,Lainnya"');
-}
-
-// Output file Excel
-if (ob_get_length()) { @ob_end_clean(); }
-header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="Template_Pengeluaran_Sekolah.xlsx"');
-header('Cache-Control: max-age=0');
-
-$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-$writer->save('php://output');
-exit;
-}
 }

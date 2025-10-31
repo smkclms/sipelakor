@@ -56,3 +56,4 @@ $route['admin/pengeluaran'] = 'admin/pengeluaran/index';
 $route['admin/pengeluaran/laporan'] = 'admin/pengeluaran/laporan';
 
 
+
