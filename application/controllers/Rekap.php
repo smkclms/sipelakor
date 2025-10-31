@@ -59,7 +59,7 @@ public function export_excel()
     $tahun = isset($tahun_row->tahun) ? $tahun_row->tahun : date('Y');
 
     // Ambil data berdasarkan filter
-    $this->db->select('r.*, u.nama as nama_sekolah, kb.nama as jenis_belanja');
+    $this->db->select('r.*, u.nama as nama_sekolah, u.alamat as kecamatan, kb.nama as jenis_belanja');
     $this->db->from('tb_rekap_pembelanjaan r');
     $this->db->join('tb_user u', 'r.sekolah_id = u.id', 'left');
     $this->db->join('tb_kategori_belanja kb', 'r.jenis_belanja_id = kb.id', 'left');
@@ -91,7 +91,7 @@ public function export_excel()
     $sheet->setTitle('Rekap Pembelanjaan');
 
     // === Header Judul ===
-    $sheet->mergeCells('A1:L1');
+    $sheet->mergeCells('A1:M1');
     $sheet->setCellValue('A1', 'Rekap Pembelanjaan Sekolah Tahun ' . $tahun);
     $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
     $sheet->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -100,16 +100,17 @@ public function export_excel()
     $colNames = [
         'A' => 'No',
         'B' => 'Nama Sekolah',
-        'C' => 'Tanggal Transaksi',
-        'D' => 'Nilai Transaksi',
-        'E' => 'Jenis Belanja',
-        'F' => 'Platform',
-        'G' => 'Marketplace',
-        'H' => 'Nama Toko',
-        'I' => 'Alamat Toko',
-        'J' => 'Pembayaran',
-        'K' => 'No Rekening / Virtual Account',
-        'L' => 'Nama Bank'
+        'C' => 'Kecamatan',
+        'D' => 'Tanggal Transaksi',
+        'E' => 'Nilai Transaksi',
+        'F' => 'Jenis Belanja',
+        'G' => 'Platform',
+        'H' => 'Marketplace',
+        'I' => 'Nama Toko',
+        'J' => 'Alamat Toko',
+        'K' => 'Pembayaran',
+        'L' => 'No Rekening / Virtual Account',
+        'M' => 'Nama Bank'
     ];
 
     // === Set Header Kolom ===
@@ -136,20 +137,21 @@ public function export_excel()
     foreach ($rekap as $r) {
         $sheet->setCellValue("A$row", $no++);
         $sheet->setCellValue("B$row", $r->nama_sekolah);
-        $sheet->setCellValue("C$row", $r->tanggal);
-        $sheet->setCellValue("D$row", 'Rp ' . number_format($r->nilai_transaksi, 0, ',', '.'));
-        $sheet->setCellValue("E$row", $r->jenis_belanja);
-        $sheet->setCellValue("F$row", $r->platform);
-        $sheet->setCellValue("G$row", $r->marketplace);
-        $sheet->setCellValue("H$row", $r->nama_toko);
-        $sheet->setCellValue("I$row", $r->alamat_toko);
-        $sheet->setCellValue("J$row", $r->pembayaran);
-        $sheet->setCellValue("K$row", $r->no_rekening);
-        $sheet->setCellValue("L$row", $r->nama_bank);
+        $sheet->setCellValue("C$row", $r->kecamatan);
+        $sheet->setCellValue("D$row", $r->tanggal);
+        $sheet->setCellValue("E$row", 'Rp ' . number_format($r->nilai_transaksi, 0, ',', '.'));
+        $sheet->setCellValue("F$row", $r->jenis_belanja);
+        $sheet->setCellValue("G$row", $r->platform);
+        $sheet->setCellValue("H$row", $r->marketplace);
+        $sheet->setCellValue("I$row", $r->nama_toko);
+        $sheet->setCellValue("J$row", $r->alamat_toko);
+        $sheet->setCellValue("K$row", $r->pembayaran);
+        $sheet->setCellValue("L$row", $r->no_rekening);
+        $sheet->setCellValue("M$row", $r->nama_bank);
 
         $total += (float)$r->nilai_transaksi;
 
-        foreach (range('A', 'L') as $col) {
+        foreach (range('A', 'M') as $col) {
             $sheet->getStyle("$col$row")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
             $sheet->getStyle("$col$row")->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
         }
@@ -158,17 +160,17 @@ public function export_excel()
     }
 
     // === Baris Total ===
-    $sheet->setCellValue("C$row", "TOTAL");
-    $sheet->setCellValue("D$row", 'Rp ' . number_format($total, 0, ',', '.'));
-    $sheet->getStyle("C$row:D$row")->getFont()->setBold(true);
-    $sheet->getStyle("C$row:D$row")->applyFromArray([
+    $sheet->setCellValue("D$row", "TOTAL");
+    $sheet->setCellValue("E$row", 'Rp ' . number_format($total, 0, ',', '.'));
+    $sheet->getStyle("D$row:E$row")->getFont()->setBold(true);
+    $sheet->getStyle("D$row:E$row")->applyFromArray([
         'borders' => [
             'allborders' => ['style' => PHPExcel_Style_Border::BORDER_THIN]
         ]
     ]);
 
     // === Styling Umum ===
-    $sheet->getStyle('A3:L' . ($row))->applyFromArray([
+    $sheet->getStyle('A3:M' . ($row))->applyFromArray([
         'alignment' => [
             'wrapText' => true
         ]
@@ -184,8 +186,6 @@ public function export_excel()
     exit;
 }
 
-
-
 // ==========================================================
 // 🔹 EXPORT PDF (PAKAI TCPDF, kompatibel PHP 5.6)
 // ==========================================================
@@ -200,7 +200,7 @@ public function export_pdf()
     $tahun = isset($tahun_row->tahun) ? $tahun_row->tahun : date('Y');
 
     // 🔹 Ambil data rekap sesuai filter
-    $this->db->select('r.*, u.nama as nama_sekolah, kb.nama as jenis_belanja');
+    $this->db->select('r.*, u.nama as nama_sekolah, u.alamat as kecamatan, kb.nama as jenis_belanja');
     $this->db->from('tb_rekap_pembelanjaan r');
     $this->db->join('tb_user u', 'r.sekolah_id = u.id', 'left');
     $this->db->join('tb_kategori_belanja kb', 'r.jenis_belanja_id = kb.id', 'left');
@@ -220,9 +220,9 @@ public function export_pdf()
     $pdf = new TCPDF('L', 'mm', 'LEGAL', true, 'UTF-8', false);
     $pdf->SetCreator('Sipelakor');
     $pdf->SetTitle('Rekap Pembelanjaan Sekolah Tahun ' . $tahun);
-    $pdf->SetMargins(5, 8, 5);
+    $pdf->SetMargins(4, 8, 4);
     $pdf->AddPage('L');
-    $pdf->SetFont('helvetica', '', 10); // ✅ Lebih besar
+    $pdf->SetFont('helvetica', '', 10); // ✅ Ukuran font seimbang
 
     // 🔹 Header dokumen
     $pdf->SetFont('helvetica', 'B', 14);
@@ -246,13 +246,16 @@ public function export_pdf()
     $pdf->SetFont('helvetica', 'B', 10);
     $pdf->SetFillColor(220, 230, 241);
 
-    // ✅ Lebar kolom proporsional full (Legal = 355mm)
-    $widths = [10, 35, 26, 28, 35, 25, 30, 33, 37, 26, 38, 25];
+    // ✅ Lebar kolom pas Legal (355mm) tanpa terpotong kanan
+    $widths = [10, 32, 27, 23, 30, 25, 27, 28, 30, 33, 25, 33, 27];
     $headers = [
-        'No', 'Nama Sekolah', 'Tanggal', 'Nilai Transaksi', 'Jenis Belanja',
-        'Platform', 'Marketplace', 'Nama Toko', 'Alamat Toko',
+        'No', 'Nama Sekolah', 'Kecamatan', 'Tanggal', 'Nilai Transaksi',
+        'Jenis Belanja', 'Platform', 'Marketplace', 'Nama Toko', 'Alamat Toko',
         'Pembayaran', 'No Rekening / VA', 'Nama Bank'
     ];
+
+    // 🔹 Hitung total lebar tabel untuk verifikasi (opsional debugging)
+    // $pdf->Cell(0, 8, 'Total width: '.array_sum($widths), 0, 1);
 
     foreach ($headers as $i => $header) {
         $pdf->MultiCell($widths[$i], 11, $header, 1, 'C', true, 0, '', '', true, 0, false, true, 11, 'M');
@@ -268,6 +271,7 @@ public function export_pdf()
         $row = [
             $no++,
             $r->nama_sekolah,
+            $r->kecamatan,
             date('d/m/Y', strtotime($r->tanggal)),
             'Rp ' . number_format($r->nilai_transaksi, 0, ',', '.'),
             $r->jenis_belanja,
@@ -283,7 +287,7 @@ public function export_pdf()
         $total += (float)$r->nilai_transaksi;
 
         foreach ($row as $i => $cell) {
-            $align = ($i == 0 || $i == 2 || $i == 5 || $i == 9) ? 'C' : (($i == 3) ? 'R' : 'L');
+            $align = ($i == 0 || $i == 3 || $i == 10) ? 'C' : (($i == 4) ? 'R' : 'L');
             $pdf->MultiCell($widths[$i], 10, $cell ?: '-', 1, $align, false, 0, '', '', true, 0, false, true, 10, 'M');
         }
         $pdf->Ln();
@@ -291,19 +295,18 @@ public function export_pdf()
 
     // 🔹 Baris total bawah
     $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Cell(array_sum(array_slice($widths, 0, 3)), 10, 'TOTAL', 1, 0, 'R', true);
-    $pdf->Cell($widths[3], 10, 'Rp ' . number_format($total, 0, ',', '.'), 1, 0, 'R', true);
-    $pdf->Cell(array_sum(array_slice($widths, 4)), 10, '', 1, 1, 'C', true);
+    $pdf->Cell(array_sum(array_slice($widths, 0, 4)), 10, 'TOTAL', 1, 0, 'R', true);
+    $pdf->Cell($widths[4], 10, 'Rp ' . number_format($total, 0, ',', '.'), 1, 0, 'R', true);
+    $pdf->Cell(array_sum(array_slice($widths, 5)), 10, '', 1, 1, 'C', true);
 
     // 🔹 Footer
     $pdf->Ln(5);
     $pdf->SetFont('helvetica', 'I', 9);
-    $pdf->Cell(0, 7, 'Dicetak pada: ' . date('d/m/Y H:i') . ' | Sistem Pelaporan Keuangan Sekolah', 0, 1, 'R');
+    $pdf->Cell(0, 7, 'Dicetak pada: ' . date('d/m/Y H:i') . ' | Sistem Pelaporan Keuangan Organisasi', 0, 1, 'R');
 
     // ✅ Output
     $pdf->Output('Rekap_Pembelanjaan_' . $tahun . '.pdf', 'I');
 }
-
 
 
 
@@ -361,7 +364,7 @@ public function detail()
     $data['tahun_aktif'] = $tahun;
 
     // Query utama
-    $this->db->select('r.*, u.nama as nama_sekolah, kb.nama as jenis_belanja');
+    $this->db->select('r.*, u.nama as nama_sekolah, u.alamat as kecamatan, kb.nama as jenis_belanja');
     $this->db->from('tb_rekap_pembelanjaan r');
     $this->db->join('tb_user u', 'r.sekolah_id = u.id', 'left');
     $this->db->join('tb_kategori_belanja kb', 'r.jenis_belanja_id = kb.id', 'left');
