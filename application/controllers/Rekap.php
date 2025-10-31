@@ -146,7 +146,7 @@ public function export_excel()
         $sheet->setCellValue("I$row", $r->nama_toko);
         $sheet->setCellValue("J$row", $r->alamat_toko);
         $sheet->setCellValue("K$row", $r->pembayaran);
-        $sheet->setCellValue("L$row", $r->no_rekening);
+        $sheet->setCellValueExplicit("L$row", $r->no_rekening, PHPExcel_Cell_DataType::TYPE_STRING);
         $sheet->setCellValue("M$row", $r->nama_bank);
 
         $total += (float)$r->nilai_transaksi;

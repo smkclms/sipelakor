@@ -555,5 +555,39 @@ public function download_template()
     $writer->save('php://output');
     exit;
 }
+// =======================================================
+// 🔹 AUTO GET JENIS BELANJA DARI KODERING (AJAX)
+// =======================================================
+public function get_jenis_belanja_by_kodering()
+{
+    if (!$this->input->is_ajax_request()) {
+        show_404();
+        return;
+    }
+
+    $kodering_id = $this->input->post('kodering_id');
+
+    if (!$kodering_id) {
+        echo json_encode(['status' => false, 'message' => 'ID kodering tidak dikirim']);
+        return;
+    }
+
+    // Ambil kategori_id dari tabel kodering
+    $this->db->select('k.kategori_id, kb.nama as kategori_nama');
+    $this->db->from('tb_kodering k');
+    $this->db->join('tb_kategori_belanja kb', 'kb.id = k.kategori_id', 'left');
+    $this->db->where('k.id', $kodering_id);
+    $row = $this->db->get()->row();
+
+    if ($row && $row->kategori_id) {
+        echo json_encode([
+            'status' => true,
+            'kategori_id' => $row->kategori_id,
+            'kategori_nama' => $row->kategori_nama
+        ]);
+    } else {
+        echo json_encode(['status' => false, 'message' => 'Jenis belanja tidak ditemukan']);
+    }
+}
 
 }

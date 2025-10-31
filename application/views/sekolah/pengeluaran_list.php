@@ -23,12 +23,13 @@
     <div class="alert alert-success"><?= $this->session->flashdata('success') ?></div>
   <?php endif; ?>
 
-  <!-- 🔹 Form Tambah Pengeluaran Manual -->
-  <form method="post" action="<?= base_url('pengeluaran/tambah') ?>" enctype="multipart/form-data" class="mb-4">
+ <!-- 🔹 Form Tambah Pengeluaran Manual -->
+<form method="post" action="<?= base_url('pengeluaran/tambah') ?>" enctype="multipart/form-data" class="mb-4">
   <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>"
          value="<?= $this->security->get_csrf_hash(); ?>">
 
-  <div class="form-row">
+  <!-- 🔸 Baris 1 -->
+  <div class="form-row align-items-end">
     <div class="col-md-3 mb-2">
       <select name="sumber_anggaran_id" class="form-control" required>
         <option value="">-- Pilih Sumber Anggaran --</option>
@@ -38,12 +39,13 @@
       </select>
     </div>
 
-    <div class="col-md-4 mb-2">
+    <div class="col-md-5 mb-2">
       <input type="text" name="kegiatan" class="form-control" placeholder="Nama Kegiatan" required>
     </div>
   </div>
 
-  <div class="form-row">
+  <!-- 🔸 Baris 2 -->
+  <div class="form-row align-items-end">
     <div class="col-md-3 mb-2">
       <input type="text" name="invoice_no" class="form-control" placeholder="No Invoice / Virtual Account (opsional)">
     </div>
@@ -52,20 +54,20 @@
       <input type="date" name="tanggal" class="form-control" required>
     </div>
 
-    <div class="col-md-3 mb-2">
-      <select name="kodering_id" class="form-control" required>
-        <option value="">-- Pilih Kodering --</option>
-        <?php foreach($kodering as $k): ?>
+    <div class="col-md-2 mb-2">
+      <select name="kodering_id" id="kodering_id" class="form-control" required>
+        <option value="">-- Kodering --</option>
+        <?php foreach ($kodering as $k): ?>
           <option value="<?= $k->id ?>"><?= $k->kode ?> - <?= $k->nama ?></option>
         <?php endforeach; ?>
       </select>
     </div>
 
     <div class="col-md-3 mb-2">
-      <select name="jenis_belanja_id" class="form-control" required>
-        <option value="">-- Pilih Jenis Belanja --</option>
-        <?php foreach($kategori_belanja as $k): ?>
-          <option value="<?= $k->id ?>"><?= $k->nama ?></option>
+      <select name="jenis_belanja_id" id="jenis_belanja_id" class="form-control" required>
+        <option value="">-- Jenis Belanja --</option>
+        <?php foreach ($kategori_belanja as $j): ?>
+          <option value="<?= $j->id ?>"><?= $j->nama ?></option>
         <?php endforeach; ?>
       </select>
     </div>
@@ -75,7 +77,8 @@
     </div>
   </div>
 
-  <div class="form-row">
+  <!-- 🔸 Baris 3 -->
+  <div class="form-row align-items-end">
     <div class="col-md-2 mb-2">
       <input type="number" name="jumlah" class="form-control" placeholder="Jumlah (Rp)" required>
     </div>
@@ -87,17 +90,15 @@
       </select>
     </div>
 
-    <!-- ✅ Tambahan Baru -->
     <div class="col-md-3 mb-2">
       <input type="text" name="marketplace" class="form-control" placeholder="Marketplace / Mitra SIPLAH">
     </div>
-    <!-- ✅ Selesai Tambahan -->
 
     <div class="col-md-3 mb-2">
       <input type="text" name="nama_toko" class="form-control" placeholder="Nama Toko/Penyedia">
     </div>
 
-    <div class="col-md-3 mb-2">
+    <div class="col-md-4 mb-2">
       <input type="text" name="alamat_toko" class="form-control" placeholder="Alamat Toko">
     </div>
 
@@ -109,7 +110,8 @@
     </div>
   </div>
 
-  <div class="form-row">
+  <!-- 🔸 Baris 4 -->
+  <div class="form-row align-items-end">
     <div class="col-md-2 mb-2">
       <input type="text" name="no_rekening" class="form-control" placeholder="No Rekening / Virtual Account">
     </div>
@@ -123,10 +125,11 @@
     </div>
 
     <div class="col-md-4 mb-2 text-right">
-      <button type="submit" class="btn btn-success">💾 Simpan</button>
+      <button type="submit" class="btn btn-success px-4">💾 Simpan</button>
     </div>
   </div>
 </form>
+
 
 
     <!-- 🔹 Tabel Data Pengeluaran -->
@@ -247,6 +250,12 @@ footer {
   }
 }
 </style>
+<style>
+  .form-select, .form-control {
+    height: 38px !important;
+    font-size: 0.9rem;
+  }
+</style>
 
 
 <!-- Tambahkan ini di bawah tabel, sebelum </div> terakhir -->
@@ -296,6 +305,33 @@ $(function(){
   $('form').each(function(){
     if ($(this).find('input[name="'+csrfName+'"]').length === 0) {
       $('<input>').attr({ type:'hidden', name:csrfName, value:csrfHash }).appendTo(this);
+    }
+  });
+});
+</script>
+<script>
+$(document).ready(function(){
+  $('#kodering_id').on('change', function(){
+    let kodering_id = $(this).val();
+    if (kodering_id) {
+      $.ajax({
+        url: '<?= base_url("pengeluaran/get_jenis_belanja_by_kodering") ?>',
+        type: 'POST',
+        dataType: 'json',
+        data: { kodering_id: kodering_id },
+        success: function(res) {
+          if (res.status) {
+            $('#jenis_belanja_id').val(res.kategori_id);
+          } else {
+            $('#jenis_belanja_id').val('');
+          }
+        },
+        error: function() {
+          console.error('Gagal mengambil data jenis belanja.');
+        }
+      });
+    } else {
+      $('#jenis_belanja_id').val('');
     }
   });
 });
