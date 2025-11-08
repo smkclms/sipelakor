@@ -32,7 +32,7 @@ class Arkas_admin extends CI_Controller {
       $this->Arkas_model->delete($id);
       $this->session->set_flashdata('success', 'File berhasil dihapus.');
     }
-    redirect('arkas');
+    redirect('arkas_admin');
   }
 public function preview_ajax($id) {
   $file = $this->Arkas_model->get_by_id($id);

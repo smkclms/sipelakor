@@ -47,11 +47,12 @@
                 <a href="<?= base_url($r->file_path) ?>" target="_blank" class="btn btn-sm btn-success">
                   <i class="fa fa-download"></i> Unduh
                 </a>
-                <a href="<?= base_url('arkas/hapus/'.$r->id_upload) ?>"
-                   onclick="return confirm('Yakin hapus file ini?')"
-                   class="btn btn-sm btn-danger">
-                   <i class="fa fa-trash"></i> Hapus
-                </a>
+                <a href="<?= base_url('arkas_admin/hapus/'.$r->id_upload) ?>"
+   onclick="return confirm('Yakin hapus file ini?')"
+   class="btn btn-sm btn-danger">
+   <i class="fa fa-trash"></i> Hapus
+</a>
+
               </td>
             </tr>
             <?php $first = false; endforeach; endforeach; endif; ?>
