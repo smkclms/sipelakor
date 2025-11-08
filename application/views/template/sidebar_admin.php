@@ -257,6 +257,12 @@
         </a>
       </li>
       <li class="nav-item">
+  <a class="nav-link" href="<?= base_url('arkas_admin') ?>">
+    <i class="fas fa-file-excel"></i> <span>Rencana Anggaran Sekolah</span>
+  </a>
+</li>
+
+      <li class="nav-item">
     <a class="nav-link" href="<?= base_url('kategori_belanja') ?>">
         <i class="fas fa-tags"></i>
         <span>Kategori Belanja</span>

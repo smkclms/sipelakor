@@ -172,6 +172,16 @@
           <i class="fas fa-wallet"></i> <span>Anggaran Sekolah</span>
         </a>
       </li>
+      <!-- <li class="nav-item">
+  <a class="nav-link" href="<?= base_url('rkas') ?>">
+    <i class="fas fa-book-open"></i> <span>Rencana Anggaran (RKAS)</span>
+  </a>
+</li> -->
+      <li class="nav-item">
+  <a class="nav-link" href="<?= base_url('arkas') ?>">
+    <i class="fas fa-file-excel"></i> <span>Upload RKAS (ARKAS)</span>
+  </a>
+</li>
       <li class="nav-item">
         <a class="nav-link" href="<?= base_url('pengeluaran') ?>">
           <i class="fas fa-file-invoice-dollar"></i> <span>Laporan Pengeluaran</span>
